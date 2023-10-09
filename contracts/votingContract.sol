@@ -3,7 +3,7 @@
 pragma solidity ^0.8.19;
 import "./counters.sol";
 import "hardhat/console.sol";
-contract Create{
+contract votingContract{
 // Candidate data
 using Counters for Counters.Counter;
 Counters.Counter public _voterID;
@@ -23,7 +23,7 @@ struct Candidate{
 }
 
 event CandidateCreate (
-uint256 indexed id,
+uint256 indexed candidateId,
 string name,
 string image,
 string age,
@@ -32,7 +32,7 @@ address _address,
 string ipfs
 );
 address [] public candidateAddress;
-mapping (address => Candidate) public candidates;
+mapping (address => Candidate) public _candidates;
 // end of candidate data
 
 //---VoterData-----
@@ -41,7 +41,7 @@ address [] public votersAddress;
 mapping (address=> Voter) public voters;
 struct Voter {
     uint256 voter_voterId;
-    uint256 voter_name;
+    string voter_name;
     string voter_image;
     address voter_address;
     uint256 voter_allowed;
@@ -51,7 +51,7 @@ struct Voter {
 }
 event VoterCreated (
      uint256 voter_voterId,
-    uint256 voter_name,
+    string voter_name,
     string voter_image,
     address voter_address,
     uint256 voter_allowed,
@@ -66,9 +66,9 @@ event VoterCreated (
 
     function setCandidate(address _address, string memory _age, string memory _name, string memory _image , string memory _ipfs) public {
         require (votingOrganizer == msg.sender , "Only organizer can set candidates");
-        _candidateId.increment();
-        uint256 idNumber =_candidateId.current();
-        Candidate storage candidate = candidate[_address]
+        _candidateID.increment();
+        uint256 idNumber =_candidateID.current();
+        Candidate storage candidate = _candidates[_address];
         candidate.age = _age;
         candidate.name = _name;
         candidate.candidateId= idNumber;
@@ -83,7 +83,7 @@ event VoterCreated (
         _name,
         _image,
         _age,
-        _voteCount,
+        idNumber,
         _address,
         _ipfs
 );}
@@ -95,18 +95,75 @@ function getCandidateLength() public view returns (uint256){
 }
 function getCandidatedata(address _address) public view returns (string memory,string memory,uint256,string memory, uint256,string memory , address) {
     return (
-            candidate[_address].age;
-            candidate[_address].name;
-            candidate[_address].candidateId;
-            candidate[_address].image;
-            candidate[_address].voteCount;
-            candidate[_address].ipfs;
-            candidate[_address]._address;
+            _candidates[_address].age,
+            _candidates[_address].name,
+            _candidates[_address].candidateId,
+            _candidates[_address].image,
+            _candidates[_address].voteCount,
+            _candidates[_address].ipfs,
+            _candidates[_address]._address
     );
 }
 // ------ Voters section --------------------
 
-function getVoters() public{}
+function voterRight(address _address, string memory _name , string memory _image , string memory _ipfs) public{
+    require(votingOrganizer == msg.sender, "only organizer can create voters");
+    _voterID.increment();
+    uint256 _idNumber = _voterID.current();
+    Voter storage voter = voters[_address];
+    require(voter.voter_allowed == 0);
+    voter.voter_allowed = 1;
+    voter.voter_name = _name;
+    voter.voter_image = _image;
+    voter.voter_address = _address;
+    voter.voter_voterId = _idNumber;
+    voter.voter_vote = 10000;
+    voter.voter_ipfs=_ipfs;
+    voter.voter_voted = false;
+    
+    votersAddress.push(_address);
+
+    emit VoterCreated(
+     _idNumber,
+     _name,
+     _image,
+     _address,
+    voter.voter_allowed,
+    voter.voter_voted,
+    voter.voter_vote,
+    _ipfs
+
+);}
+function vote(address _candidateAddress, uint256 _candidateVoteId) external{
+    
+    Voter storage voter = voters[msg.sender];
+    require(!voter.voter_voted,"You have already voted");
+    require(voter.voter_allowed != 0,"You are not allowed to vote");
+    voter.voter_voted = true;
+    voter.voter_vote = _candidateVoteId;
+    votedVoters.push(msg.sender);
+    _candidates[_candidateAddress].voteCount += voter.voter_allowed;
+}
+    function getvoterLength() public view returns(uint256){
+    return votersAddress.length;
+}
+    function getVoterdata (address _address) public view returns(uint256, string memory, string memory,address, string memory ,uint256,bool){
+    return (
+    voters[_address].voter_voterId,
+    voters[_address].voter_name,
+    voters[_address].voter_image,
+    voters[_address].voter_address,
+    voters[_address].voter_ipfs,
+    voters[_address].voter_allowed,
+    voters[_address].voter_voted
+);
+}
+function getVotedVoterList () public view returns (address[] memory){
+    return votedVoters;
+}
+function getVoterList() public view returns (address [] memory){
+    return votersAddress;
+}
 
 
 }
