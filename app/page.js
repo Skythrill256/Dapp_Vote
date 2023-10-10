@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-const HOME = () => {
+import { VotingProvider } from '@/context/voter'
+import Navbar from '../components/navbar/navbar'
+
+
+
+
+const HOME = ({Component,pageProps}) => {
   return (
-    <div>HOME</div>
+  <VotingProvider>
+    <div>
+        <Navbar />
+        <div>
+        <Component {...pageProps} />
+        </div>
+      
+      </div>
+      </VotingProvider>   
   )
 }
 export default HOME

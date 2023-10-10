@@ -1,6 +1,9 @@
 import '../styles/globals.css'
 import { Inter } from 'next/font/google'
 
+import { VotingProvider } from '@/context/voter'
+import Navbar from '../components/navbar/navbar'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
