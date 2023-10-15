@@ -11,7 +11,7 @@ const client = ipfshttpclient('https://ipfs.infura.io:5001/api/v0')
 const fetchContract = (Provider) => new ethers.Contract(VotingAddress, VottingAddressABI, Provider) //creating the new instance of the contract
 export const VotingContext = React.createContext()  // shares the entire data in react
 
-//@dev //this functio will share the value to the rest of the compoments in the applicatoion, we can easily get the data from one page to another
+//@dev //this function will share the value to the rest of the compoments in the applicatoion, we can easily get the data from one page to another
 export const VotingProvider = ({ children }) => {
     const votingTitle = "My first app"
     return (
