@@ -73,7 +73,7 @@ export const VotingProvider = ({ children }) => {
     }
     
     return (
-        <VotingContext.Provider value={{ checkIfWalletIsConnected , connectWallet }}> 
+        <VotingContext.Provider value={{ checkIfWalletIsConnected , connectWallet , uploadToIPFS}}> 
             {children}
         </VotingContext.Provider> //{{}} , here I can pass any value to get rendered in to html to display in my app
 )
