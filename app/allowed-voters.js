@@ -29,16 +29,52 @@ const allowedVoters = () => {
     setFileUrl(url)
   })
   
-  const {}
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+    maxSize: 5000000,
+  });
+
   
   return (
-    <div>
-    
-    </div>
+    <div className={Style.createVoter}>
+      <div>
+        { fileUrl && (
+          <div className={Style.voterInfo}>
+            <img src={fileUrl} alt="Voter Image" />
+            <div className={Style.voterInfo_paragraph}>
+              <p>
+                Name: <span>&nbps; {formInput.name}</span>
+              </p>
+              <p>
+                Add: &nbps; <span>{formInput.address.slice(0, 20)}</span>
+              </p>
+              <p>
+                pos: &nbps; <span>{formInput.position}</span>
+              </p>
+              </div>
+          </div>
+        )}
+        {
+          !fileUrl && (
+            <div className={Style.sideInfo}>
+              <div className={Style.sideInfo_box}>
+                <h4>Make a new Candidate for the election</h4>
+                <p>
+                Blockchain voting organization , provide ethereume ecosystem
+                </p>
+              </div>
+            </div>
+            
+        )
+        }
+      </div>
+      </div>
+      
 
 )
 }
-
+      
 
 
 export default allowedVoters
